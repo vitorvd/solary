@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 
 import br.com.solary.dtos.UserRequestDTO;
 import br.com.solary.dtos.UserResponseDTO;
-import br.com.solary.exceptions.BusinessException;
 import br.com.solary.models.User;
 import br.com.solary.repositories.UserRepository;
 import br.com.solary.services.impl.IUserService;
@@ -21,12 +20,10 @@ public class UserServiceImpl implements IUserService{
 	private UserRepository repository;
 	
 	@Override
-	public UserResponseDTO save(UserRequestDTO request) throws BusinessException {
-		
+	public UserResponseDTO save(UserRequestDTO request) {
 		Optional<User> userOptional = repository.findByLogin(request.getLogin());
 		
-		if(userOptional.isPresent()) 
-			throw new BusinessException(String.format("O Login %s já está registado.", request.getLogin()));
+		if(userOptional.isPresent()) return null;
 		
 		User user = User.builder()
 				.login(request.getLogin())
@@ -43,20 +40,27 @@ public class UserServiceImpl implements IUserService{
 
 	@Override
 	public UserResponseDTO delete(Long id) {
-		// TODO Auto-generated method stub
-		return null;
+		Optional<User> user = repository.findById(id);
+		
+		if(user.isEmpty()) return null;
+		
+		this.repository.delete(user.get());
+		
+		return new UserResponseDTO(user.get());
 	}
 
 	@Override
 	public UserResponseDTO findById(Long id) {
-		// TODO Auto-generated method stub
-		return null;
+		Optional<User> user = repository.findById(id);
+		
+		if(user.isEmpty()) return null;
+		
+		return new UserResponseDTO(user.get());
 	}
 
 	@Override
 	public List<UserResponseDTO> findAll() {
-		// TODO Auto-generated method stub
-		return null;
+		return repository.findAll().stream().map(user -> new UserResponseDTO(user)).toList();
 	}
 
 
