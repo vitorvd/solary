@@ -4,6 +4,14 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 
+.settings
+.project
+.classpath
+.mvn
+mvnw
+mvnw.cmd
+.factorypath
+
 ### IntelliJ IDEA ###
 .idea
 *.iws
